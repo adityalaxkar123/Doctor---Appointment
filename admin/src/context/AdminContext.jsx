@@ -10,7 +10,7 @@ const AdminContextProvider =(props)=>{
  
     const [aToken,setAToken] = useState(localStorage.getItem('aToken')?localStorage.getItem('aToken'):'')
     const [appointments,setAppointments] = useState([])
-   const backendUrl = import.meta.env.VITE_BACKEND_URL
+   const backendUrl = "https://doctor-appointment-backend-o5ys.onrender.com"
     const [doctors,setDoctors] = useState([])
     const[dashData,setDashData] = useState(false)
     
