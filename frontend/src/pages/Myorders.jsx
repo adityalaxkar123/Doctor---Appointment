@@ -3,24 +3,18 @@ import {AppContext} from '../context/AppContext'
 import axios from "axios"
 import {useNavigate} from 'react-router-dom'
 import { toast } from "react-toastify"
-const MyAppointments = () => {
- const {backendUrl,token,getDoctorsData} = useContext(AppContext)
+const MyOrders = () => {
+ const {backendUrl,token,getMedicineData} = useContext(AppContext)
 const navigate = useNavigate()
-const months = ['','Jan','Feb','Mar','Apr','May','Jun','July','Aug','Sep','Oct','Nov','Dec']
 
-const slotDateFormat = (slotData)=>{
-  const dateArray = slotData.split('_')
-  return dateArray[0]+" "+ months[Number(dateArray[1])] + ", " + dateArray[2]
-}
-
- const [appointments,setAppointment] = useState([])
+ const [orders,setOrder] = useState([])
  
-  const getUserAppointment = async () => {
+  const getUserOrder = async () => {
     try {
-      const {data} = await axios.get(backendUrl + '/api/user/appointments',{headers:{token}})
+      const {data} = await axios.get(backendUrl + '/api/user/userOrder',{headers:{token}})
       if (data.success) {
-        setAppointment(data.appointments.reverse())
-      // console.log(data.appointments)
+        setOrder(data.order.reverse())
+    //   console.log(data.order)
       }
     } catch (error) {
       console.log(error)
@@ -28,15 +22,15 @@ const slotDateFormat = (slotData)=>{
     }
   }
 
-const cancelAppointment = async (appointmentId) => {
+const cancelOrder = async (orderId) => {
   try {
     // console.log(appointmentId)
-    const {data} = await axios.post(backendUrl + '/api/user/cancel-appointment',{appointmentId},{headers:{token}})
+    const {data} = await axios.post(backendUrl + '/api/user/cancel-order',{orderId},{headers:{token}})
 
     if(data.success){
       toast.success(data.message)
-      getUserAppointment()
-      getDoctorsData()
+      getUserOrder()
+      getMedicineData()
     }else{
       toast.error(data.message)
     }
@@ -66,11 +60,12 @@ const cancelAppointment = async (appointmentId) => {
 // }
 
 
-
-const initPay = (order) => {
+const initPay = (medOrder) => {
+  // Create the modal container
   const paymentModal = document.createElement("div");
   paymentModal.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
 
+  // Modal content
   paymentModal.innerHTML = `
     <div class="bg-white p-6 rounded-lg shadow-lg w-96 font-sans relative animate-fadeIn">
       <!-- Close button -->
@@ -83,7 +78,7 @@ const initPay = (order) => {
       <!-- Payment Details -->
       <h2 class="text-blue-600 text-lg font-semibold text-center">Complete Your Payment</h2>
       <p class="text-gray-600 text-sm text-center">Pay securely with Razorpay</p>
-      <p class="text-xl font-bold text-center mt-2">₹${order.amount / 100} ${order.currency}</p>
+      <p class="text-xl font-bold text-center mt-2">₹${medOrder.amount} ${medOrder.currency}</p>
 
       <!-- Card Number -->
       <input type="text" id="cardNumber" placeholder="Card Number" maxlength="16" 
@@ -116,13 +111,13 @@ const initPay = (order) => {
       </div>
     </div>
   `;
-
   document.body.appendChild(paymentModal);
   document.getElementById("closeModal").addEventListener("click", () => document.body.removeChild(paymentModal));
   document.getElementById("cancelPay").addEventListener("click", () => {
     document.body.removeChild(paymentModal);
     toast.error("Payment Cancelled");
   });
+
   document.getElementById("payNow").addEventListener("click", async () => {
     document.getElementById("payNow").classList.add("hidden");
     document.getElementById("cancelPay").classList.add("hidden");
@@ -132,20 +127,20 @@ const initPay = (order) => {
       document.body.removeChild(paymentModal);
       const response = {
         razorpay_payment_id: "pay_" + Math.floor(Math.random() * 1000000),
-        razorpay_order_id: order.id,
+        razorpay_order_id: medOrder.id,
         razorpay_signature: "dummy_signature_123456",
-        razorpay_appointment: order.receipt,
-        razorpay_payment: order.amount,
+        razorpay_order: medOrder.receipt,
+        razorpay_payment: medOrder.amount,
       };
 
       console.log("Payment Successful:", response);
       toast.success("Payment successful");
       try {
-        const { data } = await axios.post(backendUrl + "/api/user/verify-razorpay", response, { headers: { token } });
+        const { data } = await axios.post(backendUrl + "/api/user/verify-medOrderRazorpay", response, { headers: { token } });
         console.log("Verification Response:", data);
         if (data.success) {
-          getUserAppointment();
-          navigate('/my-appointment');
+          getUserOrder();
+          navigate('/my-orders');
           toast.success("Payment Verified Successfully");
         } else {
           toast.error("Payment Verification Failed");
@@ -161,12 +156,12 @@ const initPay = (order) => {
 
 
 
-const appointmentRazorpay = async (appointmentId)=>{
+const orderRazorpay = async (orderId)=>{
   try {
-    const {data} = await axios.post(backendUrl + '/api/user/payment-razorpay',{appointmentId},{headers:{token}})
+    const {data} = await axios.post(backendUrl + '/api/user/payment-orderRazorpay',{ orderId },{headers:{token}})
     if(data.success){
       // console.log(data.order)
-      initPay(data.order)
+      initPay(data.medOrder)
     }
   } catch (error) {
     console.log(error)
@@ -176,53 +171,50 @@ const appointmentRazorpay = async (appointmentId)=>{
 
 useEffect(()=>{
   if(token){
-    getUserAppointment()
+    getUserOrder()
   }
 },[token])
-  return (
+  return orders && (
     <div>
       <p className="pb-3 mt-12 font-medium text-zinc-700 border-b">My appointments</p>
       <div>
         {
-          appointments.map((item,index)=>(
+          orders.map((item,index)=>(
             <div
             className="grid grid-cols-[1fr_2fr] gap-4 sm:flex sm:gap-6 py-2 border-b"
              key={index}>
               <div>
                 <img
                  className="w-32 bg-indigo-50"
-                 src={item.docData.image} alt="" />
+                 src={item.medData.image} alt="" />
               </div>
               <div className="flex-1 text-sm text-zinc-600">
-                <p className="text-neutral-800 font-semibold ">{item.docData.name}</p>
-                <p>{item.docData.speciality}</p>
-                <p className="text-neutral-800 font-semibold mt-1">Address:</p>
-                <p className="text-xs">{item.docData.address.line1}</p>
-                <p className="text-xs">{item.docData.address.line2}</p>
-                <p className="text-xs mt-1"><span className="text-sm text-neutral-700 font-medium">Date & Time: </span> {slotDateFormat(item.slotData)} | {item.slotTime}</p>
+                <p className="text-neutral-800 font-semibold ">Medicine:  <span className="ml-1">{item.medData.name}</span></p>
+                <p>₹{item.medData.price}</p>
+                <p className="text-xs mt-1"><span className="text-sm text-neutral-700 font-medium">Date & Time: </span> {item.orderDate}</p>
+                <p className="text-neutral-800 font-semibold mt-1">Address:<span className="ml-1">{item.address}</span></p>
               </div>
               <div></div>
               <div className="flex flex-col gap-2 justify-end">
-              {!item.cancelled && item.payment &&
+              {item.orderPlaced && item.paymentStatus &&
               <button className="sm-min-w-48 py-2 border rounded text-stone-500 bg-indigo-50">Paid</button>
               }
-                {!item.cancelled && 
-                !item.payment &&
-                !item.isCompleted &&
+                {item.orderPlaced &&
+                !item.paymentStatus &&
+                !item.orderDelivered &&
                 <button
-                onClick={()=> appointmentRazorpay(item._id)}
+                onClick={()=> orderRazorpay(item._id)}
                  className="text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300">Pay Online</button>
                 }
-               {!item.cancelled && 
-                !item.isCompleted &&
-                <button onClick={()=> cancelAppointment(item._id)} className="text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded  hover:bg-red-600 hover:text-white transition-all duration-300">Cancel appointment</button>
+               {item.orderPlaced &&
+                !item.orderDelivered && 
+                <button onClick={()=> cancelOrder(item._id)} className="text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded  hover:bg-red-600 hover:text-white transition-all duration-300">Cancel Order</button>
                } 
-               {item.cancelled && 
-                !item.isCompleted &&
-               <button className="sm:min-w-48 py-2 border border-red-500 rounded text-red-500">Appointment cancelled</button>
+               {!item.orderPlaced && 
+               <button className="sm:min-w-48 py-2 border border-red-500 rounded text-red-500">Order cancelled</button>
                }
                {
-                item.isCompleted && 
+                item.orderDelivered && 
                 <button
                 className="sm:min-w-48 py-2 border border-green-500 text-green-500"
                 >Completed</button>
@@ -236,4 +228,4 @@ useEffect(()=>{
   )
 }
 
-export default MyAppointments
+export default MyOrders

@@ -3,22 +3,24 @@ import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-const Login = () => {
-  const { backendUrl, setToken } = useContext(AppContext);
+const SignUp= () => {
+  const { backendUrl } = useContext(AppContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const navigate = useNavigate()
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    // console.log("sdas")
     try {
-        const { data } = await axios.post(backendUrl + "/api/user/login", {
+        const { data } = await axios.post(backendUrl + "/api/user/register", {
+          name,
           password,
           email,
         });
         if (data.success) {
-          localStorage.setItem("token", data.token);
-          setToken(data.token);
-          navigate("/")
+          toast.success("account created")
+          navigate("/login")
         } else {
           toast.error(data.message);
         }
@@ -34,11 +36,21 @@ const Login = () => {
     border rounded-xl text-zinc-600 text-sm shadow-lg"
       >
         <p className="text-2xl font-semibold">
-        Login
+          Create Account
         </p>
         <p>
-          Please Login to book appointment
+          Please sign up to book appointment
         </p>
+          <div className="w-full">
+            <p>Full Name</p>
+            <input
+              className="border border-zinc-300 rounded w-full p-2 mt-1"
+              type="text"
+              onChange={(e) => setName(e.target.value)}
+              required
+              value={name}
+            />
+          </div>
 
         <div className="w-full">
           <p>Email</p>
@@ -64,15 +76,15 @@ const Login = () => {
           type="submit"
           className="bg-primary text-white w-full py-2 rounded-md text-base"
         >
-          Login
+          Create Account
         </button>
           <p>
-            Create a new account ?
+            Already have an account?
             <span
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate('/login')}
               className="text-primary underline cursor-pointer"
             >
-              click here
+              Login here
             </span>
           </p>
       </div>
@@ -80,4 +92,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

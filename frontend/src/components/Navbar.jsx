@@ -31,6 +31,10 @@ const Navbar = () => {
           <li className="py-1">ALL DOCTORS</li>
           <hr className="border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden" />
         </NavLink>
+        <NavLink to="/store">
+          <li className="py-1">STORE</li>
+          <hr className="border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden" />
+        </NavLink>
         <NavLink to="/about">
           <li className="py-1">ABOUT</li>
           <hr className="border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden" />
@@ -63,6 +67,12 @@ const Navbar = () => {
                   My Appointments
                 </p>
                 <p
+                  onClick={() => navigate("/my-orders")}
+                  className="hover:text-black cursor-pointer"
+                >
+                  My Orders
+                </p>
+                <p
                   onClick={logout}
                   className="hover:text-black cursor-pointer"
                 >
@@ -73,7 +83,7 @@ const Navbar = () => {
           </div>
         ) : (
           <button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/signup")}
             className="bg-primary text-white px-8 py-3 rounded-full 
         font-light hidden md:block"
           >
@@ -96,6 +106,7 @@ const Navbar = () => {
             <NavLink  onClick={()=> setShowmenu(false)} to='/doctors'><p className='px-4 py-2 rounded inline-block'>All Doctors</p></NavLink>
             <NavLink  onClick={()=> setShowmenu(false)} to='/about'><p className='px-4 py-2 rounded inline-block'>About</p></NavLink>
             <NavLink  onClick={()=> setShowmenu(false)} to='/contact'><p className='px-4 py-2 rounded inline-block'>Contact</p></NavLink>
+            <NavLink  onClick={()=> setShowmenu(false)} to='/store'><p className='px-4 py-2 rounded inline-block'>Store</p></NavLink>
           </ul>
         </div>
       </div>

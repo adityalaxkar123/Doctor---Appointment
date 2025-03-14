@@ -5,7 +5,6 @@ import jwt from 'jsonwebtoken'
 import {v2 as cloudinary} from 'cloudinary'
 import doctorModel from '../models/doctor.models.js'
 import appointmentModel from '../models/appointment.models.js'
-// import razorpay from 'razorpay'
 
 //API to register user
 
@@ -38,7 +37,7 @@ const registerUser = async(req,res)=>{
         const user = await newUser.save();
         const token = jwt.sign({id:user._id},process.env.JWT_SECRET)
 
-        res.json({sucess:true,token})
+        res.json({success:true,token})
 
     } catch (error) {
         console.log(error)
@@ -215,9 +214,9 @@ const cancelAppointment = async (req,res) => {
         const doctorData = await doctorModel.findById(docId)
 
         let slot_booked = doctorData.slot_booked
-        console.log(slot_booked)
+        // console.log(slot_booked)
         slot_booked[slotData] = slot_booked[slotData].filter((e) => e!== slotTime)
-        console.log(slot_booked)
+        // console.log(slot_booked)
         await doctorModel.findByIdAndUpdate(docId,{ slot_booked })
         
         await appointmentModel.findByIdAndUpdate(
@@ -226,7 +225,7 @@ const cancelAppointment = async (req,res) => {
             { new: true } // ✅ Ensures you get the updated document
           );
           const up = await appointmentModel.findById(appointmentId)
-        console.log(up)
+        // console.log(up)
         
         
         res.json({success:true,message:"appointment cancelled"})

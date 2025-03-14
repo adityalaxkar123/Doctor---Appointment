@@ -5,6 +5,7 @@ import doctorModel from '../models/doctor.models.js'
 import jwt from 'jsonwebtoken'
 import appointmentModel from '../models/appointment.models.js'
 import userModel from '../models/user.models.js'
+import medicineModel from '../models/medicine.models.js'
 // API for adding doctor
 const addDoctor = async(req,res) =>{
 
@@ -56,6 +57,55 @@ const addDoctor = async(req,res) =>{
         res.json({success:false,message:error.message})
     }
 
+}
+
+// API for adding medicine
+const addMedicine = async(req,res) =>{
+
+    try {
+        const {name,category,price,mg} = req.body;
+        const imageFile = req.file
+        if(!name || !category || !price || !mg){
+            return res.json({success:false,message:"Missing Details"})
+        }
+        const existed = await medicineModel.findOne({name})
+        if(existed){
+            return res.json({success:false,message:"already exist"})
+        }
+        // upload image to cloudinary
+        const imageUpload = await cloudinary.uploader.upload(imageFile.path,{resource_type:"image"})
+        const imageUrl = imageUpload.secure_url;
+
+        const medicineData = {
+            name,
+            category,
+            price,
+            mg,
+            image:imageUrl,
+        }
+
+        const newMedicine = new medicineModel(medicineData)
+        await newMedicine.save()
+
+        return res.json({success:true,message:"medicine added"})
+
+    } catch (error) {
+        console.log(error)
+        res.json({success:false,message:error.message})
+    }
+
+}
+//API to get all medicine list
+const medicineList = async(req,res)=>{
+    try {
+        const medicines = await medicineModel.find({})
+
+        res.json({success:true,medicines})
+
+    } catch (error) {
+        console.log(error)
+        res.json({success:false,message:error.message})
+    }
 }
 
 // API for admin Login
@@ -124,9 +174,9 @@ const appointmentCancel = async (req,res) => {
         const doctorData = await doctorModel.findById(docId)
 
         let slot_booked = doctorData.slot_booked
-        console.log(slot_booked)
+        // console.log(slot_booked)
         slot_booked[slotData] = slot_booked[slotData].filter((e) => e!== slotTime)
-        console.log(slot_booked)
+        // console.log(slot_booked)
         await doctorModel.findByIdAndUpdate(docId,{ slot_booked })
         
         await appointmentModel.findByIdAndUpdate(
@@ -176,4 +226,6 @@ export {
     appointmentAdmin,
     appointmentCancel,
     adminDashboard,
+    addMedicine,
+    medicineList,
 }
