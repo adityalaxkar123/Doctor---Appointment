@@ -15,7 +15,7 @@ const AppContextProvider =(props)=>{
 
     const [userData,setUserData] = useState(false)
     const [token,setToken] = useState(localStorage.getItem('token')?localStorage.getItem('token'):false)
-    const backendUrl = import.meta.env.VITE_BACKEND_URL
+    const backendUrl = "https://doctor-appointment-backend-o5ys.onrender.com"
     const [doctors,setDoctors] = useState([])
     const [medicines,setMedicines] = useState([])
     const getDoctorsData = async()=>{
