@@ -7,7 +7,7 @@ export const OrderContext = createContext()
 
 
 const OrderContextProvider =(props)=>{
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const backendUrl = "https://doctor-appointment-backend-o5ys.onrender.com"
     const [orders,setOrders] = useState([])
 
     const getAllOrders = async () => {
