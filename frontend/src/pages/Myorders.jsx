@@ -176,7 +176,7 @@ useEffect(()=>{
 },[token])
   return orders && (
     <div>
-      <p className="pb-3 mt-12 font-medium text-zinc-700 border-b">My appointments</p>
+      <p className="pb-3 mt-12 font-medium text-zinc-700 border-b">My orders</p>
       <div>
         {
           orders.map((item,index)=>(
