@@ -13,7 +13,7 @@ import earning_icon from './earning_icon.svg'
 import patients_icon from './patients_icon.svg'
 import med from './med.svg'
 import order_icon from './order_icon.svg'
-
+import lab_icon from './lab_report_icon.svg'
 export const assets = {
     add_icon,
     admin_logo,
@@ -29,5 +29,6 @@ export const assets = {
     appointments_icon,
     earning_icon,
     med,
-    order_icon
+    order_icon,
+    lab_icon
 }

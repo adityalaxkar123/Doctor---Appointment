@@ -3,23 +3,28 @@ import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext.jsx";
 import axios from "axios";
 import { toast } from "react-toastify";
+
 const MyProfile = () => {
   const { userData, setUserData, token, backendUrl, loadUserProfileData } =
     useContext(AppContext);
   const [isEdit, setIsEdit] = useState(false);
   const [image, setImage] = useState(false);
+  const [labFile, setLabFile] = useState(null);
 
   const updateUserProfileData = async () => {
+    if (!isEdit) {
+      toast.error("Enable edit mode first.");
+      return;
+    }
     try {
       const formData = new FormData();
-
+      labFile && formData.append("labFile", labFile);
+      image && formData.append("image", image);
       formData.append("name", userData.name);
       formData.append("phone", userData.phone);
       formData.append("address", JSON.stringify(userData.address));
       formData.append("gender", userData.gender);
       formData.append("dob", userData.dob);
-
-      image && formData.append("image", image);
 
       const { data } = await axios.post(
         backendUrl + "/api/user/update-profile",
@@ -31,6 +36,7 @@ const MyProfile = () => {
         await loadUserProfileData();
         setIsEdit(false);
         setImage(false);
+        setLabFile(null);
       } else {
         toast.error(data.message);
       }
@@ -39,16 +45,18 @@ const MyProfile = () => {
       toast.error(error.message);
     }
   };
+
   return (
     userData && (
       <div className="max-w-lg flex flex-col gap-2 text-sm">
+        {/* IMAGE UPLOAD SECTION */}
         {isEdit ? (
           <label htmlFor="image">
             <div className="inline-block relative cursor-pointer">
               <img
                 className="w-36 rounded opacity-75"
                 src={image ? URL.createObjectURL(image) : userData.image}
-                alt=""
+                alt="Profile"
               />
               <img
                 className="w-10 absolute bottom-12 right-12 top-5"
@@ -64,9 +72,10 @@ const MyProfile = () => {
             />
           </label>
         ) : (
-          <img className="w-36 rounded" src={userData.image} alt="" />
+          <img className="w-36 rounded" src={userData.image} alt="Profile" />
         )}
 
+        {/* NAME */}
         {isEdit ? (
           <input
             className="bg-gray-50 text-3xl font-medium max-w-60 mt-4"
@@ -77,21 +86,15 @@ const MyProfile = () => {
             value={userData.name}
           />
         ) : (
-          <p
-            className="
-        font-medium text-3xl text-neutral-800 mt-4"
-          >
+          <p className="font-medium text-3xl text-neutral-800 mt-4">
             {userData.name}
           </p>
         )}
         <hr className="bg-zinc-400 h-[1px] border-none" />
+
+        {/* CONTACT INFORMATION */}
         <div>
-          <p
-            className="
-        text-neutral-500 underline mt-3"
-          >
-            CONTACT INFORMATION
-          </p>
+          <p className="text-neutral-500 underline mt-3">CONTACT INFORMATION</p>
           <div className="grid grid-cols-[1fr_3fr] gap-y-2.5 mt-3 text-neutral-700">
             <p className="font-medium">Email id:</p>
             <p className="text-blue-500">{userData.email}</p>
@@ -142,7 +145,7 @@ const MyProfile = () => {
                 />
               </p>
             ) : (
-              <p className="text-gray-500 ">
+              <p className="text-gray-500">
                 {userData.address.line1}
                 <br />
                 {userData.address.line2}
@@ -150,6 +153,8 @@ const MyProfile = () => {
             )}
           </div>
         </div>
+
+        {/* BASIC INFORMATION */}
         <div>
           <p className="text-neutral-500 underline mt-3">BASIC INFORMATION</p>
           <div className="grid grid-cols-[1fr_3fr] gap-y-2.5 mt-3 text-neutral-700">
@@ -183,6 +188,53 @@ const MyProfile = () => {
             )}
           </div>
         </div>
+
+        {/* LAB REPORT UPLOAD SECTION */}
+        <div>
+          <p className="text-neutral-500 underline mt-3">LAB REPORTS</p>
+          {isEdit ? (
+            <label htmlFor="labFile" className="cursor-pointer block">
+              <div className="flex items-center gap-2 border border-dashed p-2 rounded">
+                {labFile ? (
+                  <p className="text-sm">{labFile.name}</p>
+                ) : (
+                  <p className="text-sm text-gray-500">Upload Lab Report</p>
+                )}
+                <img
+                  className="w-6 h-6"
+                  src={assets.upload_icon}
+                  alt="Upload Lab Report"
+                />
+              </div>
+              <input
+                type="file"
+                accept="application/pdf,image/*"
+                onChange={(e) => setLabFile(e.target.files[0])}
+                id="labFile"
+                hidden
+              />
+            </label>
+          ) : (
+            <div>
+              {userData.labFile ? (
+                <div className="mt-2">
+                  <a
+                    href={userData.labFile}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500"
+                  >
+                    View Lab Report
+                  </a>
+                </div>
+              ) : (
+                <p className="text-gray-400 mt-2">No lab report uploaded</p>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* BUTTONS */}
         <div className="mt-10">
           {isEdit ? (
             <button
@@ -193,7 +245,7 @@ const MyProfile = () => {
             </button>
           ) : (
             <button
-              className="border border-primary px-8 py-2 rounded-full  hover:bg-primary hover:text-white transition-all"
+              className="border border-primary px-8 py-2 rounded-full hover:bg-primary hover:text-white transition-all"
               onClick={() => setIsEdit(true)}
             >
               Edit

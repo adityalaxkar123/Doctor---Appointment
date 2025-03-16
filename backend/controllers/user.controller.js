@@ -86,30 +86,56 @@ const getProfile = async (req,res) => {
 
 //API for update profile
 
-const updateProfile = async(req,res)=>{
+const updateProfile = async (req, res) => {
     try {
-    const {userId,name,phone,address,dob,gender} = req.body
-    const imageFile = req.file
-    if(!name || !phone || !dob || !gender){
-        return res.json({success:false,message:'data missing'})
-    }
-    await userModel.findByIdAndUpdate(userId,{name,phone,address:JSON.parse(address),dob,gender})
+        const { userId, name, phone, address, dob, gender } = req.body;
+        const imageFile = req.files?.image?.[0] || null;
+        const labFile = req.files?.labFile?.[0] || null;
 
-    if(imageFile){
-        // upload image to cloudinary
-        const imageUpload = await cloudinary.uploader.upload(imageFile.path,{resource_type:'image'})
-        const imageUrl = imageUpload.secure_url
+        if (!name || !phone || !dob || !gender) {
+            return res.json({ success: false, message: 'Data missing' });
+        }
 
-        await userModel.findByIdAndUpdate(userId,{image:imageUrl})
-    }
+        await userModel.findByIdAndUpdate(userId, {
+            name,
+            phone,
+            address: JSON.parse(address),
+            dob,
+            gender
+        });
 
-    res.json({success:true,message:"profile updated"})
+        // Upload Lab Report as an Image
+        if (labFile) {
+            const labUpload = await cloudinary.uploader.upload(labFile.path, {
+                resource_type: "image", // Changed from raw to image
+                folder: "lab_reports", // Optional: Stores in 'lab_reports' folder
+            });
+
+            const labUrl = labUpload.secure_url;
+            // console.log("Lab Report Image URL:", labUrl);
+            await userModel.findByIdAndUpdate(userId, { labFile: labUrl });
+        }
+
+        // Upload Profile Image
+        if (imageFile) {
+            const imageUpload = await cloudinary.uploader.upload(imageFile.path, {
+                resource_type: "image",
+                folder: "profile_images", // Optional: Stores in 'profile_images' folder
+            });
+
+            const imageUrl = imageUpload.secure_url;
+            // console.log("Profile Image URL:", imageUrl);
+            await userModel.findByIdAndUpdate(userId, { image: imageUrl });
+        }
+
+        res.json({ success: true, message: "Profile updated successfully!" });
 
     } catch (error) {
-        console.log(error)
-        return res.json({success:false,message:error.message})
+        console.error(error);
+        return res.json({ success: false, message: error.message });
     }
-}
+};
+
 //API to book an appointment
 
 const bookAppointment = async (req, res) => {

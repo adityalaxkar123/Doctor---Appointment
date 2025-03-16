@@ -36,6 +36,10 @@ const userSchema = new Schema({
     phone:{
         type:String,
         default:"0000000000",
+    },
+    labFile:{
+        type:String,
+        default:"",
     }
 },{timestamps:true})
 
