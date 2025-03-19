@@ -16,7 +16,7 @@ import MyOrders from './pages/Myorders.jsx'
 import SignUp from "./pages/SignUp.jsx"
 import Privacy from "./pages/Privacy.jsx"
 import Chatbot from "./pages/Chatbot.jsx"
-import Awareness from "./pages/awareness.jsx"
+import Awareness from "./pages/Awareness.jsx"
 import HireDoctor from "./pages/HireDoctor.jsx"
 // import 'react-toastify/dist/ReactTostify.css'
 const App = () => {
