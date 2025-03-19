@@ -369,6 +369,152 @@ const verifyRazorpay = async (req, res) => {
         return res.json({ success: false, message: error.message });
     }
 };
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+const generateResponse = async (req, res) => {
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [
+                    {
+                        role: "user",
+                        parts: [
+                            {
+                                text: `Provide the most recently spreading viral disease in India based strictly on **WHO India** reports.  
+
+                                Return ONLY JSON in the exact format below, with no extra text or explanation:  
+                                \`\`\`json
+                                {
+                                    "disease": "Disease Name",
+                                    "infected": 1250000,
+                                    "deaths": 12500,
+                                    "precautions": [
+                                        "Precaution 1",
+                                        "Precaution 2",
+                                        "Precaution 3"
+                                    ],
+                                    "cure": [
+                                        "Treatment 1",
+                                        "Treatment 2",
+                                        "Treatment 3"
+                                    ]
+                                }
+                                \`\`\`  
+
+                                IMPORTANT RULES:
+                                - **Do NOT add any extra text** before or after the JSON. Only return valid JSON.  
+                                - If WHO India has no exact data, **estimate the numbers based on the latest WHO report.**  
+                                - Do NOT return "I am unable to find data". Always return the best estimated values.  
+                                - Ignore older outbreaks like COVID-19 unless there is a major resurgence.  
+                                - **Precautions** should be practical steps people can take to avoid infection.  
+                                - **Cure** should be medical treatments or remedies recommended by WHO.`
+                            }
+                        ]
+                    }
+                ]
+            })
+        });
+
+        const data = await response.json();
+        let modelResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+
+        // Extract JSON safely
+        try {
+            modelResponse = modelResponse.replace(/```json|```/g, "").trim(); // Remove markdown code blocks
+            const jsonData = JSON.parse(modelResponse);
+
+            // Validate if required fields exist
+            if (!jsonData.disease || !jsonData.infected || !jsonData.deaths || !jsonData.precautions || !jsonData.cure) {
+                throw new Error("Invalid JSON format received.");
+            }
+
+            // Ensure precautions and cure are properly formatted as lists
+            jsonData.precautions = typeof jsonData.precautions === "string" 
+                ? jsonData.precautions.includes(".") 
+                    ? jsonData.precautions.split(/(?<=\.)\s+/)  // Split by sentence if periods exist
+                    : jsonData.precautions.split(/(?=[A-Z])/)   // Split by capital letters if no periods
+                : jsonData.precautions;
+
+            jsonData.cure = typeof jsonData.cure === "string" 
+                ? jsonData.cure.includes(".") 
+                    ? jsonData.cure.split(/(?<=\.)\s+/) 
+                    : jsonData.cure.split(/(?=[A-Z])/) 
+                : jsonData.cure;
+
+            return res.json({ success: true, data: jsonData });
+        } catch (parseError) {
+            console.error("Error parsing JSON:", parseError);
+            return res.status(500).json({ success: false, message: "Invalid JSON response from Gemini." });
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+const chatbotResponse = async (req, res) => {
+    try {
+        const { message } = req.body;
+
+        if (!message) {
+            return res.status(400).json({ success: false, message: "No symptoms provided" });
+        }
+
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: `User symptoms: ${message}. Predict only one most likely disease. Provide exactly 3 precaution points and 3 cure points. Also, suggest the type of doctor to consult. 
+                        If the input is not related to medical diagnosis, respond ONLY in valid JSON format:
+                        {
+                            "error": "Input not related to medical diagnosis"
+                        } 
+                        Otherwise, respond ONLY in valid JSON format:
+                        {
+                            "disease": "",
+                            "precaution": ["", "", ""],
+                            "cure": ["", "", ""],
+                            "recommendedDoctor": ""
+                        }`
+                    }]
+                }]
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!data?.candidates?.length) {
+            return res.json({ success: false, message: "Failed to generate a response" });
+        }
+
+        let rawText = data.candidates[0].content.parts[0].text.trim();
+        rawText = rawText.replace(/```json|```/g, "").trim();
+
+        try {
+            const diagnosis = JSON.parse(rawText);
+            if (diagnosis.error) {
+                return res.json({ success: false, message: diagnosis.error });
+            }
+
+            return res.json({
+                success: true,
+                response: diagnosis
+            });
+        } catch (jsonError) {
+            console.error("JSON Parsing Error:", jsonError);
+            return res.json({ success: false, message: "Input not related to medical diagnosis" });
+        }
+
+    } catch (error) {
+        console.error(error);
+        return res.json({ success: false, message: "Server error occurred." });
+    }
+};
 
 export{
     registerUser,
@@ -380,4 +526,6 @@ export{
     cancelAppointment,
     paymentRazorpay,
     verifyRazorpay,
+    generateResponse,
+    chatbotResponse,
 }

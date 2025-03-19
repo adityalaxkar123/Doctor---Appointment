@@ -15,7 +15,9 @@ import Medicine from "./pages/Medicine.jsx"
 import MyOrders from './pages/Myorders.jsx'
 import SignUp from "./pages/SignUp.jsx"
 import Privacy from "./pages/Privacy.jsx"
-import Chatbot from "./components/Chatbot.jsx"
+import Chatbot from "./pages/Chatbot.jsx"
+import Awareness from "./pages/awareness.jsx"
+import HireDoctor from "./pages/HireDoctor.jsx"
 // import 'react-toastify/dist/ReactTostify.css'
 const App = () => {
   return (
@@ -33,8 +35,10 @@ const App = () => {
         <Route path="/login" element={<Login/>} />
         <Route path="/signup" element={<SignUp/>} />
         <Route path="/about" element={<About/>} />
+         <Route path="/awareness" element={<Awareness/>} /> 
         <Route path="/privacy" element={<Privacy/>} />
         <Route path="/contact" element={<Contact/>} />
+        <Route path="/hire-doctor" element={<HireDoctor/>} />
         <Route path="/my-appointment" element={<MyAppointments/>} />
         <Route path="/my-orders" element={<MyOrders/>} />
         <Route path="/my-profile" element={<MyProfile/>} />

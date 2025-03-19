@@ -1,6 +1,6 @@
 import express from 'express'
 import upload from '../middlewares/multer.middlewares.js'
-import { registerUser,loginUser, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointment, paymentRazorpay, verifyRazorpay } from '../controllers/user.controller.js'
+import { registerUser,loginUser, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointment, paymentRazorpay, verifyRazorpay, generateResponse, chatbotResponse } from '../controllers/user.controller.js'
 import authUser from '../middlewares/authUser.js'
 import { cancelOrder, getUserOrder, orderFrontend, orderRazorpay, verifyOrderRazorpay } from '../controllers/order.controller.js'
 const userRouter = express.Router()
@@ -27,5 +27,7 @@ userRouter.get('/userOrder',authUser,getUserOrder)
 userRouter.post('/cancel-order',authUser,cancelOrder)
 userRouter.post('/payment-orderRazorpay',authUser,orderRazorpay)
 userRouter.post('/verify-medOrderRazorpay',authUser,verifyOrderRazorpay)
+userRouter.post('/gemini-response',generateResponse)
+userRouter.post('/chatbot-response',chatbotResponse)
 export default userRouter
 
