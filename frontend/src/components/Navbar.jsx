@@ -35,14 +35,14 @@ const Navbar = () => {
           <li className="py-1">STORE</li>
           <hr className="border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden" />
         </NavLink>
-        <NavLink to="/about">
-          <li className="py-1">ABOUT</li>
+        <NavLink to="/awareness">
+          <li className="py-1">DISEASE</li>
           <hr className="border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden" />
         </NavLink>
-        <NavLink to="/contact">
+        {/* <NavLink to="/contact">
           <li className="py-1">CONTACT</li>
           <hr className="border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden" />
-        </NavLink>
+        </NavLink> */}
       </ul>
       <div className="flex items-center gap-4 ">
         {token && userData ? (
@@ -105,8 +105,8 @@ const Navbar = () => {
             <NavLink  onClick={()=> setShowmenu(false)} to='/'><p className='px-4 py-2 rounded inline-block'>Home</p></NavLink>
             <NavLink  onClick={()=> setShowmenu(false)} to='/doctors'><p className='px-4 py-2 rounded inline-block'>All Doctors</p></NavLink>
             <NavLink  onClick={()=> setShowmenu(false)} to='/store'><p className='px-4 py-2 rounded inline-block'>Store</p></NavLink>
-            <NavLink  onClick={()=> setShowmenu(false)} to='/about'><p className='px-4 py-2 rounded inline-block'>About</p></NavLink>
-            <NavLink  onClick={()=> setShowmenu(false)} to='/contact'><p className='px-4 py-2 rounded inline-block'>Contact</p></NavLink>
+            <NavLink  onClick={()=> setShowmenu(false)} to='/awareness'><p className='px-4 py-2 rounded inline-block'>Awareness</p></NavLink>
+            {/* <NavLink  onClick={()=> setShowmenu(false)} to='/contact'><p className='px-4 py-2 rounded inline-block'>Contact</p></NavLink> */}
           </ul>
         </div>
       </div>
