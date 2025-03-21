@@ -7,7 +7,8 @@ import { AdminContext } from "../../context/AdminContext";
 import { toast } from "react-toastify";
 import axios from "axios";
 const AddDoctor = () => {
-
+  const [lattitude,setLattitude] = useState(null);
+  const [longitude,setLongitude] = useState(null);
   const [docImg,setDocImg] = useState(false)
   const [name,setName] = useState('')
   const [email,setEmail] = useState('')
@@ -35,6 +36,8 @@ const AddDoctor = () => {
       formData.append('image',docImg)
       formData.append('name',name)
       formData.append('email',email)
+      formData.append('lattitude',lattitude)
+      formData.append('longitude',longitude)
       formData.append('password',password)
       formData.append('experience',experience)
       formData.append('fees',Number(fees))
@@ -61,6 +64,8 @@ const AddDoctor = () => {
         setDegree('')
         setAbout('')
         setFees('')
+        setLattitude(null)
+        setLongitude(null)
       }else{
         toast.error(data.message)
       }
@@ -182,6 +187,18 @@ const AddDoctor = () => {
               onChange={(e)=> setAddress2(e.target.value)} 
               className="border rounded px-3 py-2"
               type="text" value={address2} placeholder=" address 2" required />
+            </div>
+
+            <div className="flex-1 flex flex-col gap-1">
+              <p>Coordinates of location</p>
+              <input 
+              onChange={(e)=> setLattitude(e.target.value)}
+              className="border rounded px-3 py-2"
+              type="text" value={lattitude} placeholder=" lattitude" required />
+              <input
+              onChange={(e)=> setLongitude(e.target.value)} 
+              className="border rounded px-3 py-2"
+              type="text" value={longitude} placeholder=" longitude" required />
             </div>
 
           </div>

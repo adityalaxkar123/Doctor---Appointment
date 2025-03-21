@@ -18,6 +18,7 @@ import Privacy from "./pages/Privacy.jsx"
 import Chatbot from "./pages/Chatbot.jsx"
 import Awareness from "./pages/Awareness.jsx"
 import HireDoctor from "./pages/HireDoctor.jsx"
+import Map from "./pages/Map.jsx"
 // import 'react-toastify/dist/ReactTostify.css'
 const App = () => {
   return (
@@ -43,6 +44,7 @@ const App = () => {
         <Route path="/my-orders" element={<MyOrders/>} />
         <Route path="/my-profile" element={<MyProfile/>} />
         <Route path="/appointment/:docId" element={<Appointments/>} />
+        <Route path="/map" element={<Map/>} />
       </Routes>
       <Chatbot/>
       <Footer/>

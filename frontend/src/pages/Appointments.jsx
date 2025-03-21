@@ -14,6 +14,7 @@ const Appointments = () => {
   const [slotIndex,setSlotIndex] = useState(0)
   const [slotTime,setSlotTime] = useState('')
   const daysOfWeek = ['SUN','MON','TUE','WED','THU','FRI','SAT']
+  const [verified,setVerified] = useState(false)
   const navigate = useNavigate()
   const fetchDocInfo = async () => {
     const docInfo = await doctors.find((doc) => doc._id === docId);
@@ -75,12 +76,25 @@ const Appointments = () => {
     }
 
   }
-
+  const verifyLab = async () => {
+    try {
+      const {data} = await axios.post(backendUrl+'/api/user/verify-lab',{},{headers:{token}})
+      if(data.success){
+        setVerified(true)
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error(error.message)
+    }
+  }
 
   const bookAppointment = async()=>{
     if(!token){
       toast.warn("Login to book appointment")
       return navigate('/login')
+    }
+    if(!verified){
+      toast.warn("lab file not uploaded yet")
     }
 
     try {
@@ -110,6 +124,7 @@ const Appointments = () => {
 
   useEffect(() => {
     fetchDocInfo()
+    verifyLab()
   }, [doctors, docId])
 
   useEffect(()=>{

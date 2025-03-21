@@ -64,7 +64,7 @@ export default function Chatbot() {
   };
 
   return (
-    <div className="fixed bottom-4 right-4">
+    <div className="fixed bottom-4 right-4 z-50">
       {!isOpen && (
         <button 
           className="p-4 bg-blue-500 text-white rounded-full shadow-lg flex items-center justify-center"

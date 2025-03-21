@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react"
 import {DoctorContext} from '../../context/DoctorContext.jsx'
-import {AppContext} from '../../context/AppContext.jsx'
 import { toast } from "react-toastify"
 import axios from "axios"
 const DoctorProfile = () => {
@@ -11,7 +10,6 @@ const DoctorProfile = () => {
       getProfileData()
     
   },[dToken])
-  const {currency} = useContext(AppContext)
   console.log(profileData)
   const [isEdit,setIsEdit] = useState(false)
 // console.log(dToken)
@@ -72,7 +70,7 @@ const DoctorProfile = () => {
             </div>
 
             <p className="text-gray-600 font-medium mt-4">
-              Appointment fee: <span className="text-gray-800">{currency}{ isEdit ? <input type="number" onChange={(e)=> setProfileData(prev => ({...prev,fees:e.target.value}))} value={profileData.fees}/> : profileData.fees}</span>
+              Appointment fee: <span className="text-gray-800">₹{ isEdit ? <input type="number" onChange={(e)=> setProfileData(prev => ({...prev,fees:e.target.value}))} value={profileData.fees}/> : profileData.fees}</span>
             </p>
 
             <div className="flex gap-2 py-2">

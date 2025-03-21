@@ -19,6 +19,7 @@ import DoctorProfile from "./pages/Doctor/DoctorProfile.jsx"
 import AddMedicine from "./pages/Admin/AddMedicine.jsx"
 import Orders from "./pages/Admin/Orders.jsx"
 import LabReport from "./pages/Doctor/LabReport.jsx"
+import AiPrescription from "./pages/Doctor/AiPrescription.jsx"
 const App = () => {
 
   const {aToken} = useContext(AdminContext)
@@ -44,7 +45,7 @@ const App = () => {
       <Route path='/doctor-appointments' element={<DoctorAppointment/>}/>
       <Route path='/doctor-profile' element={<DoctorProfile/>}/>
       <Route path='/lab-report' element={<LabReport/>}/>
-
+      <Route path='/ai-prescription' element={<AiPrescription/>}/>
       </Routes>
 
     </div>

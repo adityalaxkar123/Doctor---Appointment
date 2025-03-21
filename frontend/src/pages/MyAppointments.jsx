@@ -203,7 +203,7 @@ useEffect(()=>{
               </div>
               <div></div>
               <div className="flex flex-col gap-2 justify-end">
-              {!item.cancelled && item.payment &&
+              {!item.cancelled && item.payment && !item.isCompleted &&
               <button className="sm-min-w-48 py-2 border rounded text-stone-500 bg-indigo-50">Paid</button>
               }
                 {!item.cancelled && 
@@ -226,6 +226,12 @@ useEffect(()=>{
                 <button
                 className="sm:min-w-48 py-2 border border-green-500 text-green-500"
                 >Completed</button>
+               }
+               {
+                item.userData.prescription && item.isCompleted &&
+                <a href={item.userData.prescription}
+                className="text-center sm:min-w-48 py-2 border border-green-500 text-green-500"
+                > view prescription</a>
                }
               </div>
             </div>

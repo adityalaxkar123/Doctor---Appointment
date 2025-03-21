@@ -47,6 +47,7 @@ import malaria from './malaria.jpg'
 import cancer from './cancer.jpg'
 import flu from './influenza_flu.jpg'
 import virus_icon from './virus_icon_no_bg.jpg'
+import green_location from './green-location.png'
 export const assets = {
     appointment_img,
     header_img,
@@ -66,7 +67,8 @@ export const assets = {
     stripe_logo,
     razorpay_logo,
     privacy_icon,
-    virus_icon
+    virus_icon,
+    green_location
 }
 
 export const specialityData = [

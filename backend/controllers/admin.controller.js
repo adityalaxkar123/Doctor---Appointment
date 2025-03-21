@@ -10,7 +10,7 @@ import medicineModel from '../models/medicine.models.js'
 const addDoctor = async(req,res) =>{
 
     try {
-        const {name,email,password,speciality,degree,experience,about,fees, address} = req.body;
+        const {name,email,password,speciality,degree,experience,about,fees, address,lattitude,longitude} = req.body;
         const imageFile = req.file
 
         // console.log({name,email,password,speciality,degree,experience,about,fees, address},imageFile)
@@ -44,7 +44,9 @@ const addDoctor = async(req,res) =>{
             about,
             fees,
             address:JSON.parse(address),
-            date:Date.now()
+            date:Date.now(),
+            lattitude,
+            longitude
         }
 
         const newDoctor = new doctorModel(doctorData)

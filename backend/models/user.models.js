@@ -40,6 +40,10 @@ const userSchema = new Schema({
     labFile:{
         type:String,
         default:"",
+    },
+    prescription:{
+        type:String,
+        default:""
     }
 },{timestamps:true})
 

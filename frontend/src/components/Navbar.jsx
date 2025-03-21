@@ -73,6 +73,12 @@ const Navbar = () => {
                   My Orders
                 </p>
                 <p
+                  onClick={() => navigate("/map")}
+                  className="hover:text-black cursor-pointer"
+                >
+                  Doctor Location
+                </p>
+                <p
                   onClick={logout}
                   className="hover:text-black cursor-pointer"
                 >

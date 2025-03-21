@@ -234,6 +234,23 @@ const MyProfile = () => {
           )}
         </div>
 
+        <div>
+              {userData.prescription ? (
+                <div className="mt-2">
+                  <a
+                    href={userData.prescription}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500"
+                  >
+                    View Prescription
+                  </a>
+                </div>
+              ) : (
+                <p className="text-gray-400 mt-2">No prescription found</p>
+              )}
+            </div>
+
         {/* BUTTONS */}
         <div className="mt-10">
           {isEdit ? (

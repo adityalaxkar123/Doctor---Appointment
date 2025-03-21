@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 import {v2 as cloudinary} from 'cloudinary'
 import doctorModel from '../models/doctor.models.js'
 import appointmentModel from '../models/appointment.models.js'
-
+import {createCanvas} from 'canvas'
 //API to register user
 
 
@@ -515,6 +515,160 @@ const chatbotResponse = async (req, res) => {
         return res.json({ success: false, message: "Server error occurred." });
     }
 };
+//API to get verify user is submitted lab report or not
+const verifyLab = async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const userData = await userModel.findById(userId); // Use findById instead of find
+
+        if (!userData) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        const labFile = userData.labFile;
+        if (!labFile) {
+            return res.json({ success: false, message: "Lab file not found" });
+        }
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        return res.json({ success: false, message: "Server error occurred." });
+    }
+};
+
+const generateAndSavePrescription = async (req, res) => {
+    try {
+      const { userId, docId, prescriptionDetails } = req.body;
+  
+      // Fetch doctor details
+      const doctor = await doctorModel.findById(docId);
+      if (!doctor) {
+        return res.status(404).json({ error: "Doctor not found" });
+      }
+  
+      // Fetch user details (patient)
+      const user = await userModel.findById(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+  
+      // Step 1: Create Prescription Template
+      const canvas = createCanvas(800, 1000);
+      const ctx = canvas.getContext("2d");
+  
+      // Background
+      ctx.fillStyle = "#F0F0F0"; // Light gray background
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+      // Header (Blue with Medical Icon)
+      ctx.fillStyle = "#3B5CCC"; // Blue
+      ctx.fillRect(0, 0, canvas.width, 100);
+  
+      // Medical Cross Icon (White Circle with Blue Cross)
+      ctx.fillStyle = "white";
+      ctx.beginPath();
+      ctx.arc(700, 50, 40, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#3B5CCC"; // Blue cross
+      ctx.fillRect(680, 40, 40, 15);
+      ctx.fillRect(690, 30, 15, 40);
+  
+      // Clinic & Doctor Details (Placed Below the Blue Header)
+      let y = 130;
+      ctx.fillStyle = "black";
+      ctx.font = "22px Arial";
+      ctx.fillText("prescripto clinic", 50, y);
+      ctx.fillText(doctor.address.line1 || "Clinic Address", 50, (y += 30));
+  
+      ctx.font = "20px Arial";
+      ctx.fillText(`Dr. ${doctor.name}, ${doctor.speciality}`, 50, (y += 40));
+  
+      // Date
+      y += 40;
+      ctx.fillStyle = "blue";
+      ctx.font = "bold 20px Arial";
+      ctx.fillText(`Date: ${new Date().toDateString()}`, 50, y);
+  
+      // Patient Details
+      y += 40;
+      ctx.fillStyle = "black";
+      ctx.font = "18px Arial";
+      ctx.fillText(`Patient Name: ${user.name}`, 50, y);
+      ctx.fillText(`Date of Birth: ${user.dob || "N/A"}`, 50, (y += 30));
+      ctx.fillText(`Address: ${user.address.line1 || "N/A"}`, 50, (y += 30));
+  
+      // Prescription Section Title
+      y += 50;
+      ctx.fillStyle = "blue";
+      ctx.font = "bold 20px Arial";
+      ctx.fillText("Prescription", 50, y);
+  
+      // Prescription Content (Properly Spaced)
+      y += 40;
+      ctx.fillStyle = "black";
+      ctx.font = "18px Arial";
+      ctx.fillText(`Medication: ${prescriptionDetails.medication}`, 50, y);
+      ctx.fillText(`Dosage: ${prescriptionDetails.dosage}`, 50, (y += 35));
+      ctx.fillText(`Quantity: ${prescriptionDetails.quantity}`, 50, (y += 35));
+      ctx.fillText(`Refills: ${prescriptionDetails.refills}`, 50, (y += 35));
+  
+      // Signature Section
+      ctx.font = "italic 18px Arial";
+      ctx.fillText("Signature", 600, 920);
+      ctx.fillStyle = "#3B5CCC";
+      ctx.fillRect(590, 930, 120, 2);
+      ctx.fillStyle = "black";
+      ctx.fillText(`Dr. ${doctor.name}`, 610, 960);
+  
+      // Convert Canvas to Buffer
+      const imageBuffer = canvas.toBuffer("image/jpeg");
+  
+      // Step 2: Upload Image to Cloudinary
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { resource_type: "image", format: "jpg" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        ).end(imageBuffer);
+      });
+  
+      if (!result.secure_url) {
+        return res.status(500).json({ error: "Failed to upload prescription image" });
+      }
+  
+      // Step 3: Save Image URL to MongoDB (Linked to User)
+      await userModel.findByIdAndUpdate(userId, { prescription: result.secure_url });
+  
+      return res.status(200).json({
+        success:true,
+        message: "Prescription generated and saved successfully",
+        imageUrl: result.secure_url,
+      });
+  
+    } catch (error) {
+      console.error("Error generating prescription:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+  
+ const getUserId = async (req,res) => {
+    try {
+        const {email} = req.body;
+        const user = await userModel.findOne({email})
+        if(!user){
+            return res.json({success:false,message:"user id not fetched"})
+        }
+        const userId = user._id;
+        return res.json({success:true,userId})
+        
+    } catch (error) {
+        console.error("Error generating prescription:", error);
+      return res.status(500).json({ error: "Internal Server Error" }); 
+    }
+ }
 
 export{
     registerUser,
@@ -528,4 +682,7 @@ export{
     verifyRazorpay,
     generateResponse,
     chatbotResponse,
+    verifyLab,
+    generateAndSavePrescription,
+    getUserId
 }

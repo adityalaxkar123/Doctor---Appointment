@@ -31,7 +31,7 @@ const LabReport = () => {
             </div>
 
             <div className="w-full sm:w-auto flex justify-end">
-              {!item.isCompleted && item.userData.labFile ? (
+              {!item.isCompleted && !item.cancelled && item.userData.labFile ? (
                 <a href={item.userData.labFile} target="_blank" rel="noopener noreferrer">
                   <img
                     className="w-32 h-32 object-cover rounded-lg border shadow-md cursor-pointer hover:scale-105 transition-transform"
@@ -41,6 +41,9 @@ const LabReport = () => {
                 </a>
               ) : item.isCompleted ?
               <p className="text-green-500 text-xs font-medium">Completed</p>
+
+               : item.cancelled ? 
+               <p className="text-red-500 text-right">Cancelled</p>
                :
                (
                 <p className="text-red-500 text-right">No Report Available</p>

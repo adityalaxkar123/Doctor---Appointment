@@ -182,6 +182,16 @@ const updataDoctorProfile = async (req,res) => {
     }
 }
 
+// get doctor data for api
+const getDocData = async (req, res) => {
+    try {
+      const doctors = await doctorModel.find({}, "name speciality address lattitude longitude");
+      res.status(200).json(doctors);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: error.message });
+    }
+  };
 
 export {
     changeAvailability,
@@ -193,4 +203,5 @@ export {
     doctorDashboard,
     doctorProfile,
     updataDoctorProfile,
+    getDocData,
 }

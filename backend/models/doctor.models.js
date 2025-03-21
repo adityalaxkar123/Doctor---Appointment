@@ -53,6 +53,14 @@ const doctorSchema = new Schema({
     slot_booked:{
         type:Object,
         default:{}
+    },
+    lattitude:{
+        type:Number,
+        required:true
+    },
+    longitude:{
+        type:Number,
+        required:true
     }
 },{minimize:false})
 
