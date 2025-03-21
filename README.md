@@ -3,7 +3,7 @@
 A **comprehensive solution** for seamless healthcare scheduling and management, integrating **User, Doctor, and Admin** panels for a streamlined experience.
 
 ## 🚀 Live Demo
-🔗 **Frontend:** [Doctor Appointment Frontend](https://doctor-appointment-frontend-3ae3.onrender.com)  
+🔗 **Frontend:** [Doctor Appointment Frontend](https://doctor-appointment-frontend-7s73.onrender.com)  
 🔗 **Admin Panel:** [Doctor Appointment Admin](https://doctor-appointment-admin-38uv.onrender.com)
 
 ---
