@@ -12,19 +12,25 @@ A **comprehensive solution** for seamless healthcare scheduling and management, 
 ### 🔹 **User Panel**
 - 📅 Book, edit, and manage doctor appointments.
 - 💳 Secure payments for consultations and services.
-- ❌ Cancel bookings anytime.
+- ❌ Cancel bookings anytime with a refund system.
 - 💊 Buy medicines directly through the platform.
 - 📄 Upload lab reports for doctor review.
+- 🏥 Diagnose diseases using an **AI-powered diagnosis tool**.
+- 📍 Find **nearby doctors** based on preferred category and location.
+- 📊 View **real-time data** on the most virulent diseases and general information about them.
 - 🔐 Privacy policy and data protection features.
 
 ### 🔹 **Doctor Panel**
 - 📆 View and manage upcoming appointments.
 - 💰 Track earnings and appointment history.
 - 🔍 Access user-uploaded lab reports for better diagnosis.
+- 📜 Generate prescriptions using an **AI-powered prescription generator**.
 - ✏️ Update profile information.
+- 📞 **One-on-one video consultation** with patients.
 
 ### 🔹 **Admin Panel**
 - 👨‍⚕️ Manage doctors and their profiles.
+- ✅ Verify doctors before automatically adding them to the available list.
 - 📋 View all appointments across the platform.
 - ❌ Handle cancellations efficiently.
 - 📈 Track profits and orders related to medicine purchases.
@@ -44,6 +50,8 @@ A **comprehensive solution** for seamless healthcare scheduling and management, 
 - **Database:** MongoDB
 - **Authentication:** JWT, Bcrypt
 - **Payments:** Razorpay Integration
+- **AI Features:** Custom AI Model for disease diagnosis and prescription generation.
+- **Location Services:** Google Maps API for finding nearby doctors.
 - **Hosting:** Render (Frontend & Admin)
 
 ---
@@ -80,4 +88,5 @@ For any issues or suggestions, feel free to reach out at **laxkaraditya55@gmail.
 
 ---
 
-### 🌟 Star this repository if you found it useful!
+### 🌟 Star this repository if you found it useful! 🚀
+
